@@ -12,7 +12,6 @@
     "browserify": "^13.1.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
-    "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^6.0.2",
     "tsify": "^1.0.3",
     "tslint": "^3.14.0",
