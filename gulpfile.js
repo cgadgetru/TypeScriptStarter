@@ -1,8 +1,9 @@
-var gulp = require("gulp");
-var browserify = require("browserify");
+var gulp = require('gulp');
+var browserify = require('browserify');
 var source = require('vinyl-source-stream');
-var tsify = require("tsify");
+var tsify = require('tsify');
 var concat = require('gulp-concat');
+var tslint = require('gulp-tslint');
 
 var vendors = '/vendors';
 var paths = {
@@ -21,7 +22,7 @@ var paths = {
             'node_modules/owl.carousel/dist/assets/owl.carousel.min.css',
             'node_modules/owl.carousel/dist/assets/owl.theme.default.min.css'
         ],
-        img:[
+        img: [
             'node_modules/owl.carousel/dist/assets/ajax-loader.gif',
             'node_modules/owl.carousel/dist/assets/owl.video.play.png'
         ]
@@ -53,12 +54,12 @@ gulp.task('vendors-js', function () {
     }
 });
 
-gulp.task("copy-html", function () {
+gulp.task('copy-html', function () {
     return gulp.src(paths.pages)
         .pipe(gulp.dest(paths.distRoot));
 });
 
-gulp.task("typeScripts", function () {
+gulp.task('typeScripts', function () {
     return browserify({
         basedir: '.',
         debug: true,
@@ -72,10 +73,22 @@ gulp.task("typeScripts", function () {
         .pipe(gulp.dest(paths.javaScripts));
 });
 
+gulp.task('tslint', function () {
+    gulp.src(paths.typeScripts)
+        .pipe(tslint({
+            configuration: 'tslint.json'
+        }))
+        .pipe(tslint.report({
+            summarizeFailureOutput: true
+        }))
+});
+
 gulp.task('watch', function () {
-    gulp.watch(paths.typeScripts, ['typeScripts']);
+    gulp.watch(paths.typeScripts, ['typeScripts','tslint']);
     gulp.watch(paths.pages, ['copy-html']);
 });
 
-gulp.task("default", ["watch", "vendors-css", "vendors-js", "vendors-img"]);
+gulp.task('build',['tslint', 'typeScripts', 'copy-html', 'vendors-css', 'vendors-js', 'vendors-img'])
+
+gulp.task('default', ['build', 'watch']);
 
